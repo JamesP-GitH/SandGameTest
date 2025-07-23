@@ -28,19 +28,19 @@ function drawGrid() {
     }
 }
 
-function loop() {
-    physics.update();
-    drawGrid();
-    requestAnimationFrame(loop);
-}
-
-loop();
-
 let isDrawing = false;
+let lastMouseX = 0;
+let lastMouseY = 0;
+let lastPlaceTime = 0;
+const placeInterval = 20; // milliseconds
 
 canvas.addEventListener("mousedown", (e) => {
     isDrawing = true;
-    placeBlock(e);
+    updateMousePosition(e);
+});
+
+canvas.addEventListener("mousemove", (e) => {
+    updateMousePosition(e);
 });
 
 canvas.addEventListener("mouseup", () => {
@@ -51,26 +51,28 @@ canvas.addEventListener("mouseleave", () => {
     isDrawing = false;
 });
 
-canvas.addEventListener("mousemove", (e) => {
-    if (isDrawing) {
-        placeBlock(e);
-    }
-});
-
-function placeBlock(event) {
+function updateMousePosition(e) {
     const rect = canvas.getBoundingClientRect();
-
-    // Convert mouse coordinates to canvas space
-    const mouseX = event.clientX - rect.left;
-    const mouseY = event.clientY - rect.top;
-
-    // Calculate grid coordinates
-    const gridX = Math.floor(mouseX / cellSize);
-    const gridY = Math.floor(mouseY / cellSize);
-
-    // Check bounds and if the cell is empty
-    if (gridY >= 0 && gridY < rows && gridX >= 0 && gridX < cols && grid[gridY][gridX] === null) {
-        // Add a new solid block at the clicked position
-        grid[gridY][gridX] = new Solid(gridX, gridY, "blue", "solid", 0, 0, 0, 0, 12);
-    }
+    lastMouseX = e.clientX - rect.left;
+    lastMouseY = e.clientY - rect.top;
 }
+
+function loop() {
+    if (isDrawing) {
+        const now = performance.now();
+        if (now - lastPlaceTime > placeInterval) {
+            const gridX = Math.floor(lastMouseX / cellSize);
+            const gridY = Math.floor(lastMouseY / cellSize);
+            if (gridY >= 0 && gridY < rows && gridX >= 0 && gridX < cols && grid[gridY][gridX] === null) {
+                grid[gridY][gridX] = new Solid(gridX, gridY, "blue", "solid", 0, 0, 0, 0, 12);
+                lastPlaceTime = now;
+            }
+        }
+    }
+
+    physics.update();
+    drawGrid();
+    requestAnimationFrame(loop);
+}
+
+loop();
