@@ -5,7 +5,19 @@ export default class PhysicsEngine {
 
     update() {
         // 1. Iterate over blocks wanting to move
+        for (let y = 0; y < this.grid.length; y++) {
+            for (let x = 0; x < this.grid[0].length; x++) {
+                const block = this.grid[y][x];
+                if (block) {
+                    block.updated = false;
+                }
+            }
+        }
         // 2. Collect intended moves
+        const moves = [];
+        const claimedTargets = new Set();
+        
+        
         // 3. Resolve conflicting moves
         // 4. Commit moves
     }
