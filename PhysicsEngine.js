@@ -4,22 +4,51 @@ export default class PhysicsEngine {
     }
 
     update() {
-        // 1. Iterate over blocks wanting to move
+        // Clear update flags at start of tick
         for (let y = 0; y < this.grid.length; y++) {
             for (let x = 0; x < this.grid[0].length; x++) {
                 const block = this.grid[y][x];
-                if (block) {
-                    block.updated = false;
-                }
+                if (block) block.updated = false;
             }
         }
-        // 2. Collect intended moves
+
+        // Prepare move queue and map of targets
         const moves = [];
-        const claimedTargets = new Set();
-        
-        
-        // 3. Resolve conflicting moves
-        // 4. Commit moves
+        const claimedTargets = new Set(); // stores 'x,y' strings
+
+        // Iterate over blocks wanting to move from bottom row up (left open for adding gravity force to check if block to move)
+        for (let y = this.grid.length - 1; y >= 0; y--) {
+            for (let x = 0; x < this.grid[0].length; x++) {
+                const block = this.grid[y][x];
+                if (!block || block.updated || block.type !== "solid") continue;
+
+                // Check available target move locations
+                const target = this.decideMove(block);
+
+                if (target) {
+                    const key = `${target.x},${target.y}`;
+                    // Check for conflicts
+                    if (!claimedTargets.has(key)) {
+                        claimedTargets.add(key);
+                        moves.push({ from: { x, y }, to: target, block });
+                    }
+                }
+
+                // Mark block as processed
+                block.updated = true;
+            }
+        }
+
+        // Commit moves
+        for (const move of moves) {
+            const { from, to, block } = move;
+
+            this.grid[from.y][from.x] = null;
+            this.grid[to.y][to.x] = block;
+
+            block.x = to.x;
+            block.y = to.y;
+        }
     }
 
     // Returns available x, y based on slipperyness if decide move called
