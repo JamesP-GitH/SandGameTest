@@ -1,8 +1,8 @@
 export default class Block {
-    constructor(x, y, blockColor, type, gravity, velocityY, submerged, updated) {
+    constructor(x, y, color, type, gravity, velocityY, submerged, updated) {
         this.x = x;
         this.y = y;
-        this.blockColor = blockColor;
+        this.color = color;
         this.type = type;
         this.gravity = gravity;
         this.velocityY = velocityY;
