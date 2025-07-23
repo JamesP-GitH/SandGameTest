@@ -36,7 +36,28 @@ function loop() {
 
 loop();
 
-canvas.addEventListener("click", (event) => {
+let isDrawing = false;
+
+canvas.addEventListener("mousedown", (e) => {
+    isDrawing = true;
+    placeBlock(e);
+});
+
+canvas.addEventListener("mouseup", () => {
+    isDrawing = false;
+});
+
+canvas.addEventListener("mouseleave", () => {
+    isDrawing = false;
+});
+
+canvas.addEventListener("mousemove", (e) => {
+    if (isDrawing) {
+        placeBlock(e);
+    }
+});
+
+function placeBlock(event) {
     const rect = canvas.getBoundingClientRect();
 
     // Convert mouse coordinates to canvas space
@@ -50,6 +71,6 @@ canvas.addEventListener("click", (event) => {
     // Check bounds and if the cell is empty
     if (gridY >= 0 && gridY < rows && gridX >= 0 && gridX < cols && grid[gridY][gridX] === null) {
         // Add a new solid block at the clicked position
-        grid[gridY][gridX] = new Solid(gridX, gridY, "blue", "solid", 12);
+        grid[gridY][gridX] = new Solid(gridX, gridY, "blue", "solid", 0, 0, 0, 0, 12);
     }
-});
+}
