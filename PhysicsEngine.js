@@ -54,14 +54,20 @@ export default class PhysicsEngine {
     // Returns available x, y based on slipperyness if decide move called
     decideMove(block) {
         const { x, y } = block;
+        const below = this.getBlock(x, y + 1);
 
         // Try to fall straight down
         if (this.isEmpty(x, y + 1)) {
+            block.velocityY = 1;
             return { x: x, y: y + 1 };
         }
 
-        // Try sliding diagonally if slippery
-        if (this.slipperyness > 0 && Math.random() < this.slipperyness) {
+        if (below && below.type === "solid" && below.velocityY === 0 && block.velocityY > 0) {
+            below.velocityY = block.velocityY;
+        }
+
+        // Try sliding diagonally if slippery & already falling
+        if (block.velocityY > 0 && block.slipperyness > 0 && Math.random() < block.slipperyness) {
             const leftRight = Math.random() < 0.5 ? -1 : 1;
 
             // Try one random diagonal first
@@ -73,12 +79,21 @@ export default class PhysicsEngine {
                 return { x: x - leftRight, y: y + 1 };
             }
         }
-        // No move possible
+
+        // No move possible, stop falling
+        block.velocityY = 0;
         return null;
     }
 
     // Helper function checks if inputed coordinates are empty (null)
     isEmpty(x, y) {
         return y >= 0 && y < this.grid.length && x >= 0 && x < this.grid[0].length && this.grid[y][x] === null;
+    }
+
+    getBlock(x, y) {
+        if (y < 0 || y >= this.grid.length || x < 0 || x >= this.grid[0].length) {
+            return null;
+        }
+        return this.grid[y][x];
     }
 }

@@ -64,7 +64,7 @@ function loop() {
             const gridX = Math.floor(lastMouseX / cellSize);
             const gridY = Math.floor(lastMouseY / cellSize);
             if (gridY >= 0 && gridY < rows && gridX >= 0 && gridX < cols && grid[gridY][gridX] === null) {
-                grid[gridY][gridX] = new Solid(gridX, gridY, "blue", "solid", 0, 0, 0, 0, 12);
+                grid[gridY][gridX] = new Solid(gridX, gridY, "saddleBrown", "solid", 0, 0, 0, 0, 0.95);
                 lastPlaceTime = now;
             }
         }
