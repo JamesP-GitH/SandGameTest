@@ -20,7 +20,7 @@ export default class PhysicsEngine {
         }
 
         // Try sliding diagonally if slippery
-        if (this.slipperyness !== 0) {
+        if (this.slipperyness > 0 && Math.random() < this.slipperyness) {
             const leftRight = Math.random() < 0.5 ? -1 : 1;
 
             // Try one random diagonal first
