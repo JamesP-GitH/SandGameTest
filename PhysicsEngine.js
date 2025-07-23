@@ -10,13 +10,34 @@ export default class PhysicsEngine {
         // 4. Commit moves
     }
 
+    // Returns available x, y based on slipperyness if decide move called
     decideMove(block) {
-        // Contains movement logic depending on block type and properties
-        const { x, y, slipperyness } = block;
+        const { x, y } = block;
 
-        // 1. check cell below
-        const isEmpty = (x, y + 1) === null;
+        // Try to fall straight down
+        if (this.isEmpty(x, y + 1)) {
+            return { x: x, y: y + 1 };
+        }
 
-        // 2. if empty, return that as move
+        // Try sliding diagonally if slippery
+        if (this.slipperyness !== 0) {
+            const leftRight = Math.random() < 0.5 ? -1 : 1;
+
+            // Try one random diagonal first
+            if (this.isEmpty(x + leftRight, y + 1)) {
+                return { x: x + leftRight, y: y + 1 };
+            }
+            // If that fails, try the other diagonal
+            if (this.isEmpty(x - leftRight, y + 1)) {
+                return { x: x - leftRight, y: y + 1 };
+            }
+        }
+        // No move possible
+        return null;
+    }
+
+    // Helper function checks if inputed coordinates are empty (null)
+    isEmpty(x, y) {
+        return y >= 0 && y < this.grid.length && x >= 0 && x < this.grid[0].length && this.grid[y][x] === null;
     }
 }
