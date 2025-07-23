@@ -1,7 +1,7 @@
 export default class Block {
-    constructor(xPosition, yPosition, blockColor, type, gravity, velocityY, submerged, updated) {
-        this.xPosition = xPosition;
-        this.yPosition = yPosition;
+    constructor(x, y, blockColor, type, gravity, velocityY, submerged, updated) {
+        this.x = x;
+        this.y = y;
         this.blockColor = blockColor;
         this.type = type;
         this.gravity = gravity;

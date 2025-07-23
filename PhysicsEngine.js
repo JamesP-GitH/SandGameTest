@@ -10,7 +10,13 @@ export default class PhysicsEngine {
         // 4. Commit moves
     }
 
-    decideMove() {
+    decideMove(block) {
         // Contains movement logic depending on block type and properties
+        const { x, y, slipperyness } = block;
+
+        // 1. check cell below
+        const isEmpty = (x, y + 1) === null;
+
+        // 2. if empty, return that as move
     }
 }
