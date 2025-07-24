@@ -58,22 +58,45 @@ function updateMousePosition(e) {
     lastMouseY = e.clientY - rect.top;
 }
 
-function loop() {
-    if (isDrawing) {
-        const now = performance.now();
-        if (now - lastPlaceTime > placeInterval) {
-            const gridX = Math.floor(lastMouseX / cellSize);
-            const gridY = Math.floor(lastMouseY / cellSize);
-            if (gridY >= 0 && gridY < rows && gridX >= 0 && gridX < cols && grid[gridY][gridX] === null) {
-                grid[gridY][gridX] = new Sand(gridX, gridY);
-                lastPlaceTime = now;
-            }
-        }
+const TPS = 60;
+const TICK_INTERVAL = 1000 / TPS;
+
+let lastTick = performance.now();
+let tickAccumulator = 0;
+
+function gameLoop(currentTime) {
+    const delta = currentTime - lastTick;
+    lastTick = currentTime;
+    tickAccumulator += delta;
+
+    // Run fixed ticks
+    while (tickAccumulator >= TICK_INTERVAL) {
+        updateTick(); // apply physics, input, etc.
+        tickAccumulator -= TICK_INTERVAL;
     }
 
-    physics.update();
-    drawGrid();
-    requestAnimationFrame(loop);
+    drawGrid(); // draw latest grid state
+    requestAnimationFrame(gameLoop);
 }
 
-loop();
+function handleUserInput() {
+    if (!isDrawing) return;
+
+    const now = performance.now();
+    if (now - lastPlaceTime > placeInterval) {
+        const gridX = Math.floor(lastMouseX / cellSize);
+        const gridY = Math.floor(lastMouseY / cellSize);
+
+        if (gridY >= 0 && gridY < rows && gridX >= 0 && gridX < cols && grid[gridY][gridX] === null) {
+            grid[gridY][gridX] = new Sand(gridX, gridY);
+            lastPlaceTime = now;
+        }
+    }
+}
+
+function updateTick() {
+    handleUserInput(); // mouse drawing
+    physics.update(); // block behavior
+}
+
+requestAnimationFrame(gameLoop);

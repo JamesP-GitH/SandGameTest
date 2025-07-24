@@ -7,6 +7,6 @@ export default class Water extends Liquid {
         this.color = "deepskyblue";
         this.slipperyness = 1;
         this.resistance = 0.1;
-        this.density = 1000;
+        this.density = 997;
     }
 }
