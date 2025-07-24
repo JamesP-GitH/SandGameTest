@@ -22,6 +22,10 @@ export default class PhysicsEngine {
                 const block = this.grid[y][x];
                 if (!block || block.updated || block.type !== "solid") continue;
 
+                // Apply gravity for acceleration
+                block.velocityY += block.gravity;
+                block.velocityY = Math.min(block.velocityY, 3); // cap max speed
+
                 // Check available target move locations
                 const target = this.decideMove(block);
 
@@ -54,20 +58,26 @@ export default class PhysicsEngine {
     // Returns available x, y based on slipperyness if decide move called
     decideMove(block) {
         const { x, y } = block;
-        const below = this.getBlock(x, y + 1);
+        const maxFall = Math.max(1, Math.floor(block.velocityY));
 
-        // Try to fall straight down
-        if (this.isEmpty(x, y + 1)) {
-            block.velocityY = 1;
-            return { x: x, y: y + 1 };
-        }
-
-        if (below && below.type === "solid" && below.velocityY === 0 && block.velocityY > 0) {
-            below.velocityY = block.velocityY;
+        // Try falling vertically based on current velocity
+        for (let dy = 1; dy <= maxFall; dy++) {
+            const newY = y + dy;
+            if (this.isEmpty(x, newY)) {
+                return { x, y: newY };
+            } else {
+                // Transfer momentum if hitting a solid block
+                const below = this.getBlock(x, newY);
+                if (below && below.type === "solid" && below.velocityY === 0 && block.velocityY > below.resistance) {
+                    below.velocityY = block.velocityY; // transfer momentum
+                    block.velocityY *= 0.5; // lose some velocity
+                }
+                break; // can't fall past this point
+            }
         }
 
         // Try sliding diagonally if slippery & already falling
-        if (block.velocityY > 0 && block.slipperyness > 0 && Math.random() < block.slipperyness) {
+        if (block.velocityY > 0.5 && block.slipperyness > 0 && Math.random() < block.slipperyness) {
             const leftRight = Math.random() < 0.5 ? -1 : 1;
 
             // Try one random diagonal first

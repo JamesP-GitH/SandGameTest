@@ -32,7 +32,7 @@ let isDrawing = false;
 let lastMouseX = 0;
 let lastMouseY = 0;
 let lastPlaceTime = 0;
-const placeInterval = 20; // milliseconds
+const placeInterval = 50; // milliseconds
 
 canvas.addEventListener("mousedown", (e) => {
     isDrawing = true;
@@ -64,7 +64,7 @@ function loop() {
             const gridX = Math.floor(lastMouseX / cellSize);
             const gridY = Math.floor(lastMouseY / cellSize);
             if (gridY >= 0 && gridY < rows && gridX >= 0 && gridX < cols && grid[gridY][gridX] === null) {
-                grid[gridY][gridX] = new Solid(gridX, gridY, "saddleBrown", "solid", 0, 0, 0, 0, 0.95);
+                grid[gridY][gridX] = new Solid(gridX, gridY, "sandyBrown", "solid", 0.1, 0.2, 0, 0, 0.95, 0, 2);
                 lastPlaceTime = now;
             }
         }
