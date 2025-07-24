@@ -1,12 +1,18 @@
 export default class Block {
-    constructor(x, y, color, type, gravity = 1, velocityY = 1, submerged, updated) {
+    constructor(x, y) {
         this.x = x;
         this.y = y;
-        this.color = color;
-        this.type = type;
-        this.gravity = gravity;
-        this.velocityY = velocityY;
-        this.submerged = submerged;
-        this.updated = updated;
+
+        this.velocityY = 0;
+        this.updated = false;
+        this.submerged = false;
+
+        this.type = "block";
+        this.color = "#000";
+
+        this.gravity = 0;
+        this.slipperyness = 0;
+        this.buoyancy = 0;
+        this.resistance = 0;
     }
 }
