@@ -12,7 +12,6 @@ export default class Block {
 
         this.gravity = 0;
         this.slipperyness = 0;
-        this.buoyancy = 0;
         this.resistance = 0;
         this.density = 1;
     }
