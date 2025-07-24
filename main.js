@@ -1,4 +1,5 @@
 import PhysicsEngine from "./PhysicsEngine.js";
+import Sand from "./Sand.js";
 import Solid from "./Solid.js";
 
 const canvas = document.getElementById("gridCanvas");
@@ -64,7 +65,7 @@ function loop() {
             const gridX = Math.floor(lastMouseX / cellSize);
             const gridY = Math.floor(lastMouseY / cellSize);
             if (gridY >= 0 && gridY < rows && gridX >= 0 && gridX < cols && grid[gridY][gridX] === null) {
-                grid[gridY][gridX] = new Solid(gridX, gridY, "sandyBrown", "solid", 0.1, 0.2, 0, 0, 0.95, 0, 2);
+                grid[gridY][gridX] = new Sand(gridX, gridY);
                 lastPlaceTime = now;
             }
         }

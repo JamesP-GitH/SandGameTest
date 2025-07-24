@@ -6,8 +6,8 @@ export default class Solid extends Block {
 
         this.type = "solid";
         this.gravity = 0.2;
-        this.slipperyness = 0.05;
-        this.resistance = 0.8;
+        this.slipperyness = 0.00;
+        this.resistance = 0.0;
         this.buoyancy = 0;
     }
 }

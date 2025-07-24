@@ -70,7 +70,7 @@ export default class PhysicsEngine {
                 const below = this.getBlock(x, newY);
                 if (below && below.type === "solid" && below.velocityY === 0 && block.velocityY > below.resistance) {
                     below.velocityY = block.velocityY; // transfer momentum
-                    block.velocityY *= 0.5; // lose some velocity
+                    block.velocityY *= 0.7; // lose some velocity
                 }
                 break; // can't fall past this point
             }
