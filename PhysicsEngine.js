@@ -20,7 +20,7 @@ export default class PhysicsEngine {
         for (let y = this.grid.length - 1; y >= 0; y--) {
             for (let x = 0; x < this.grid[0].length; x++) {
                 const block = this.grid[y][x];
-                if (!block || block.updated || block.type !== "solid") continue;
+                if (!block || block.updated || block.type === "gas") continue;
 
                 // Apply gravity for acceleration
                 block.velocityY += block.gravity;
@@ -68,7 +68,12 @@ export default class PhysicsEngine {
             } else {
                 // Transfer momentum if hitting a solid block
                 const below = this.getBlock(x, newY);
-                if (below && below.type === "solid" && below.velocityY === 0 && block.velocityY > below.resistance) {
+                if (
+                    below &&
+                    (below.type === "solid" || below.type === "liquid") &&
+                    below.velocityY === 0 &&
+                    block.velocityY > below.resistance
+                ) {
                     below.velocityY = block.velocityY; // transfer momentum
                     block.velocityY *= 0.7; // lose some velocity
                 }

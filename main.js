@@ -1,6 +1,7 @@
 import PhysicsEngine from "./PhysicsEngine.js";
 import Sand from "./Sand.js";
 import Solid from "./Solid.js";
+import Water from "./Water.js";
 
 const canvas = document.getElementById("gridCanvas");
 const ctx = canvas.getContext("2d");
@@ -58,11 +59,33 @@ function updateMousePosition(e) {
     lastMouseY = e.clientY - rect.top;
 }
 
-const TPS = 60;
-const TICK_INTERVAL = 1000 / TPS;
+let currentBlockType = "sand";
+let paused = false;
+let TPS = 60;
+let TICK_INTERVAL = 1000 / TPS;
 
 let lastTick = performance.now();
 let tickAccumulator = 0;
+
+const blockSelector = document.getElementById("blockSelector");
+const pauseButton = document.getElementById("pauseButton");
+const tickSlider = document.getElementById("tickSlider");
+const tickDisplay = document.getElementById("tickDisplay");
+
+blockSelector.addEventListener("change", () => {
+    currentBlockType = blockSelector.value;
+});
+
+pauseButton.addEventListener("click", () => {
+    paused = !paused;
+    pauseButton.textContent = paused ? "Play" : "Pause";
+});
+
+tickSlider.addEventListener("input", () => {
+    TPS = parseInt(tickSlider.value);
+    TICK_INTERVAL = 1000 / TPS;
+    tickDisplay.textContent = TPS;
+});
 
 function gameLoop(currentTime) {
     const delta = currentTime - lastTick;
@@ -83,12 +106,20 @@ function handleUserInput() {
     if (!isDrawing) return;
 
     const now = performance.now();
+
     if (now - lastPlaceTime > placeInterval) {
         const gridX = Math.floor(lastMouseX / cellSize);
         const gridY = Math.floor(lastMouseY / cellSize);
 
-        if (gridY >= 0 && gridY < rows && gridX >= 0 && gridX < cols && grid[gridY][gridX] === null) {
-            grid[gridY][gridX] = new Sand(gridX, gridY);
+        let block = null;
+        if (currentBlockType === "sand") {
+            block = new Sand(gridX, gridY);
+        } else if (currentBlockType === "water") {
+            block = new Water(gridX, gridY);
+        }
+
+        if (gridY >= 0 && gridY < rows && gridX >= 0 && gridX < cols && grid[gridY][gridX] === null && block) {
+            grid[gridY][gridX] = block;
             lastPlaceTime = now;
         }
     }
@@ -96,7 +127,9 @@ function handleUserInput() {
 
 function updateTick() {
     handleUserInput(); // mouse drawing
-    physics.update(); // block behavior
+    if (!paused) {
+        physics.update(); // block behavior
+    }
 }
 
 requestAnimationFrame(gameLoop);
