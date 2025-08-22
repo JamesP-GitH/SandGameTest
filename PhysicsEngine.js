@@ -83,20 +83,35 @@ export default class PhysicsEngine {
 
         // Try sliding diagonally if slippery & already falling
         if (block.velocityY > 0.5 && block.slipperyness > 0 && Math.random() < block.slipperyness) {
-            const leftRight = Math.random() < 0.5 ? -1 : 1;
+            const directions = [-1, 1];
 
-            // Try one random diagonal first
-            if (this.isEmpty(x + leftRight, y + 1)) {
-                return { x: x + leftRight, y: y + 1 };
-            }
-            // If that fails, try the other diagonal
-            if (this.isEmpty(x - leftRight, y + 1)) {
-                return { x: x - leftRight, y: y + 1 };
+            // Shuffle directions
+            if (Math.random() < 0.5) directions.reverse();
+
+            for (const dir of directions) {
+                if (this.isEmpty(x + dir, y + 1)) {
+                    return { x: x + dir, y: y + 1 };
+                }
             }
         }
 
         // No move possible, stop falling
         block.velocityY = 0;
+
+        // Liquid spreading left/right with random chance
+        if (block.type === "liquid" && Math.random() < 0.5) {
+            const directions = [-1, 1];
+
+            // Shuffle directions to randomize order
+            if (Math.random() < 0.5) directions.reverse();
+
+            for (const dir of directions) {
+                if (this.isEmpty(x + dir, y)) {
+                    return { x: x + dir, y };
+                }
+            }
+        }
+
         return null;
     }
 
